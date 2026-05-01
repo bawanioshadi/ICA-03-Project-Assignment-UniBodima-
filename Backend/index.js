@@ -8,6 +8,8 @@ dotenv.config();//use env file
 
 const app =express();//express app inialization
 
+app.use(express.json());
+
 app.use("/api/auth", authRoutes);
 
 const port =dotenv.PORT;
