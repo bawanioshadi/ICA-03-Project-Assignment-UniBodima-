@@ -2,10 +2,13 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors"; //frontend and backend connected
+import authRoutes from "./routes/authRoutes.js";
 
 dotenv.config();//use env file
 
 const app =express();//express app inialization
+
+app.use("/api/auth", authRoutes);
 
 const port =dotenv.PORT;
 
