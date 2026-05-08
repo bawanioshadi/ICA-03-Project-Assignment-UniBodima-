@@ -1,5 +1,7 @@
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+
 
 // REGISTER
 export const register = async (req, res) => {
@@ -45,3 +47,4 @@ export const register = async (req, res) => {
     res.status(500).json({ status: "fail", message: error.message });
   }
 };
+
