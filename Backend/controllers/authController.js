@@ -47,4 +47,47 @@ export const register = async (req, res) => {
     res.status(500).json({ status: "fail", message: error.message });
   }
 };
+//login function
+export const login = async (req, res) => {
+  try {
+    const { identifier, password } = req.body;
+
+    if (!identifier || !password) {
+      return res.status(400).json({ status: "fail", message: "All fields required" });
+    }
+
+  
+    const user = await User.findOne({
+      $or: [
+        { phone: identifier },
+        { name: identifier }
+      ]
+    });
+
+    if (!user) {
+      return res.status(400).json({ status: "fail", message: "User not found" });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ status: "fail", message: "Invalid password" });
+    }
+
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    res.json({
+      status: "success",
+      message: "Login successful",
+      token,
+      user
+    });
+
+  } catch (error) {
+    res.status(500).json({ status: "fail", message: error.message });
+  }
+};
 
