@@ -57,3 +57,16 @@ export const acceptRequest = async (req, res) => {
     res.status(500).json({ status: "fail", message: error.message });
   }
 };
+
+// GET STUDENT'S REQUESTS
+export const getStudentRequests = async (req, res) => {
+  try {
+    const requests = await Request.find({ studentId: req.user.id })
+      .populate("boardingId");
+
+    res.json({ status: "success", requests });
+
+  } catch (error) {
+    res.status(500).json({ status: "fail", message: error.message });
+  }
+};
