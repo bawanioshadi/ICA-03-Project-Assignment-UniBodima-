@@ -34,3 +34,26 @@ export const getOwnerRequests = async (req, res) => {
     res.status(500).json({ status: "fail", message: error.message });
   }
 };
+// ACCEPT REQUEST (OWNER)
+export const acceptRequest = async (req, res) => {
+  try {
+    const { visitDate, visitTime } = req.body;
+
+    const request = await Request.findById(req.params.id);
+
+    if (!request) {
+      return res.status(404).json({ status: "fail", message: "Request not found" });
+    }
+
+    request.status = "accepted";
+    request.visitDate = visitDate;
+    request.visitTime = visitTime;
+
+    await request.save();
+
+    res.json({ status: "success", message: "Request accepted successfully", request });
+
+  } catch (error) {
+    res.status(500).json({ status: "fail", message: error.message });
+  }
+};
