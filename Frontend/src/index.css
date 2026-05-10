@@ -1,10 +1,17 @@
+:root {
+  --ub-orange: #f97316;
+  --ub-orange-hover: #ea580c;
+  --ub-price-blue: #2563eb;
+  --ub-text: #111827;
+  --ub-muted: #6b7280;
+}
+
 body {
   margin: 0;
-  background:
-    radial-gradient(circle at 0% 0%, rgba(73, 125, 255, 0.08), transparent 35%),
-    radial-gradient(circle at 100% 100%, rgba(110, 66, 255, 0.08), transparent 35%),
-    #f4f7fb;
-  color: #1d2433;
+  background: #ffffff;
+  color: var(--ub-text);
+  font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 #root {
@@ -16,19 +23,294 @@ body {
   backdrop-filter: blur(6px);
 }
 
+.form-label-subtle {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #6c757d;
+  margin-bottom: 0.35rem;
+  letter-spacing: 0.01em;
+}
+
+/* —— Public landing / auth backdrop —— */
+.landing-page-bg {
+  background:
+    radial-gradient(circle at 0% 0%, rgba(249, 115, 22, 0.06), transparent 40%),
+    radial-gradient(circle at 100% 100%, rgba(37, 99, 235, 0.06), transparent 35%),
+    #f9fafb;
+}
+
 .property-select {
   max-width: 320px;
 }
 
 .landing-hero {
   border-radius: 1.25rem;
-  background: linear-gradient(135deg, #ffffff 0%, #eef3ff 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #eef2ff 100%);
 }
 
 .landing-title {
   font-size: clamp(1.75rem, 4vw, 2.75rem);
   font-weight: 700;
   line-height: 1.2;
+}
+
+/* —— App shell —— */
+.ub-brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.ub-logo-square {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: linear-gradient(145deg, var(--ub-orange), #ea580c);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 16px rgba(249, 115, 22, 0.28);
+}
+
+.ub-brand-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--ub-text);
+  letter-spacing: -0.02em;
+}
+
+.ub-brand-tagline {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--ub-muted);
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.ub-app-header,
+.ub-public-header {
+  background: #fff;
+}
+
+.ub-header-inner {
+  max-width: 1400px;
+  margin-inline: auto;
+}
+
+.ub-main-nav {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.ub-nav-pill {
+  border: none;
+  background: transparent;
+  color: var(--ub-muted);
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 0;
+  position: relative;
+  transition: color 0.15s ease;
+}
+
+.ub-nav-pill:hover {
+  color: var(--ub-text);
+}
+
+.ub-nav-pill.active {
+  color: var(--ub-orange);
+  font-weight: 600;
+}
+
+.ub-nav-pill.active::after {
+  content: '';
+  position: absolute;
+  left: 14%;
+  right: 14%;
+  bottom: -2px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--ub-orange);
+}
+
+.ub-btn-orange {
+  background: var(--ub-orange);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+}
+
+.ub-btn-orange:hover {
+  background: var(--ub-orange-hover);
+  color: #fff;
+}
+
+.ub-toolbar-search {
+  min-width: 240px;
+  max-width: 480px;
+  margin-left: auto;
+}
+
+.ub-search-field {
+  border-radius: 999px !important;
+  padding-left: 1.1rem !important;
+}
+
+@media (max-width: 767px) {
+  .ub-toolbar-search {
+    width: 100%;
+    margin-left: 0;
+    max-width: none;
+  }
+
+  .ub-main-nav {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .ub-header-inner > div {
+    gap: 0.75rem;
+  }
+}
+
+.ub-page-title {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  color: var(--ub-text);
+  letter-spacing: -0.03em;
+}
+
+.ub-dashboard-wrap {
+  max-width: 1400px;
+  margin-inline: auto;
+}
+
+.ub-bell-btn {
+  color: #374151;
+  width: 40px;
+  height: 40px;
+}
+
+.ub-bell-btn:hover {
+  background: #f3f4f6;
+}
+
+.ub-bell-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+  color: #fff;
+  background: #ef4444;
+}
+
+.ub-user-toggle {
+  border-radius: 999px !important;
+}
+
+.ub-user-avatar {
+  width: 32px;
+  height: 32px;
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+/* —— Property cards —— */
+.ub-prop-card {
+  border-radius: 14px !important;
+}
+
+.ub-prop-media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: #e5e7eb;
+}
+
+.ub-prop-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ub-for-rent-tag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 1;
+  padding: 0.28rem 0.65rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #fff;
+  background: rgba(17, 24, 39, 0.65);
+  border-radius: 999px;
+}
+
+.ub-prop-card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.ub-price-accent {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--ub-price-blue);
+}
+
+.ub-icon-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #374151;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+
+.ub-icon-circle:hover {
+  border-color: #d1d5db;
+  background: #f9fafb;
+}
+
+.ub-icon-circle.ub-icon-danger {
+  border-color: #fecaca;
+  color: #dc2626;
+}
+
+.ub-icon-circle.ub-icon-danger:hover {
+  background: #fef2f2;
+}
+
+.ub-request-summary {
+  border-radius: 12px !important;
+}
+
+.ub-detail-carousel {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.ub-modal-title {
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 .property-carousel {
@@ -51,8 +333,8 @@ body {
 }
 
 .owner-contact {
-  background: #f8fbff;
-  border: 1px solid #dbe6f7;
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
 }
 
 .request-card {
@@ -67,4 +349,101 @@ body {
   .landing-hero .btn {
     width: 100%;
   }
+}
+
+/* —— Marketing landing hero —— */
+.ub-landing-hero {
+  min-height: clamp(520px, 72vh, 720px);
+  display: flex;
+  align-items: center;
+}
+
+.ub-landing-hero-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center center;
+}
+
+.ub-landing-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+   to bottom,
+    rgba(17, 24, 39, 0.45) 0%,
+    rgba(17, 24, 39, 0.65) 50%,
+    rgba(17, 24, 39, 0.75) 100%
+  );
+}
+
+.ub-landing-hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+.ub-hero-headline {
+  text-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+
+.ub-hero-sub {
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.ub-hero-search-card {
+  max-width: 960px;
+}
+
+.ub-range-orange::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--ub-orange);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.5);
+}
+
+.ub-range-orange::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--ub-orange);
+  border: none;
+  cursor: pointer;
+}
+
+.ub-filter-chip {
+  border: none;
+  background: rgba(17, 24, 39, 0.6);
+  color: #fff;
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  transition:
+    background 0.15s,
+    transform 0.15s;
+}
+
+.ub-filter-chip:hover {
+  background: rgba(17, 24, 39, 0.8);
+}
+
+.ub-filter-chip.active {
+  background: rgba(249, 115, 22, 0.95);
+}
+
+.ub-section-title {
+  font-size: 1.65rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.ub-site-footer .btn-link:hover {
+  color: var(--ub-orange);
+}
+
+.ub-public-home:hover {
+  color: var(--ub-orange);
 }
