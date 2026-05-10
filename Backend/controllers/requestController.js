@@ -20,3 +20,17 @@ export const createRequest = async (req, res) => {
     res.status(500).json({ status: "fail", message: error.message });
   }
 };
+
+// GET OWNER'S REQUESTS
+export const getOwnerRequests = async (req, res) => {
+  try {
+    const requests = await Request.find()
+      .populate("boardingId")
+      .populate("studentId", "name phone");
+
+    res.json({ status: "success", requests });
+
+  } catch (error) {
+    res.status(500).json({ status: "fail", message: error.message });
+  }
+};
