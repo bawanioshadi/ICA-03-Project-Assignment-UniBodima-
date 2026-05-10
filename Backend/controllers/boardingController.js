@@ -75,3 +75,34 @@ export const updateBoarding = async (req, res) => {
     res.status(500).json({ status: "fail", message: error.message });
   }
 };
+
+// DELETE BOARDING (OWNER)
+export const deleteBoarding = async (req, res) => {
+  try {
+    const boarding = await Boarding.findById(req.params.id);
+
+    if (!boarding) {
+      return res.status(404).json({ status: "fail", message: "Boarding not found" });
+    }
+
+    if (boarding.ownerId.toString() !== req.user.id) {
+      return res.status(403).json({ status: "fail", message: "Not your boarding post" });
+    }
+
+    await boarding.deleteOne();
+
+    res.json({ status: "success", message: "Boarding deleted successfully" });
+
+  } catch (error) {
+    res.status(500).json({ status: "fail", message: error.message });
+  }
+};
+
+export const getPublicBoardings = async (req, res) => {
+  try {
+    const boardings = await Boarding.find();
+    res.json({ status: "success", boardings });
+  } catch (error) {
+    res.status(500).json({ status: "fail", message: error.message });
+  }
+};
