@@ -48,3 +48,30 @@ export const getOwnerBoardings = async (req, res) => {
     res.status(500).json({ status: "fail", message: error.message });
   }
 };
+
+// UPDATE BOARDING (OWNER)
+export const updateBoarding = async (req, res) => {
+  try {
+    const boarding = await Boarding.findById(req.params.id);
+
+    if (!boarding) {
+      return res.status(404).json({status: "fail", message: "Boarding not found" });
+    }
+
+
+    if (boarding.ownerId.toString() !== req.user.id) {
+      return res.status(403).json({status:'fail', message: "Not your boarding post" });
+    }
+
+    const updated = await Boarding.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+
+    res.json({status: "success",message: "Boarding updated successfully", boarding: updated });
+
+  } catch (error) {
+    res.status(500).json({ status: "fail", message: error.message });
+  }
+};
