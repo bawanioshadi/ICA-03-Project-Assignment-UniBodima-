@@ -70,3 +70,25 @@ export const getStudentRequests = async (req, res) => {
     res.status(500).json({ status: "fail", message: error.message });
   }
 };
+// REJECT REQUEST (OWNER)
+export const rejectRequest = async (req, res) => {
+  try {
+    const { rejectReason } = req.body;
+
+    const request = await Request.findById(req.params.id);
+
+    if (!request) {
+      return res.status(404).json({ status: "fail", message: "Request not found" });
+    }
+
+    request.status = "rejected";
+    request.rejectReason = rejectReason;
+
+    await request.save();
+
+    res.json({ status: "success", message: "Request rejected successfully", request });
+
+  } catch (error) {
+    res.status(500).json({ status: "fail", message: error.message });
+  }
+};
