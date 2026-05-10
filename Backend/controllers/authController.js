@@ -91,3 +91,19 @@ export const login = async (req, res) => {
   }
 };
 
+export const updateProfile = async (req, res) => {
+  try {
+    const { name, phone } = req.body;
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ status: "fail", message: "User not found" });
+    if (phone && phone !== user.phone) {
+      const existingUser = await User.findOne({ phone });
+      if (existingUser) return res.status(400).json({ status: "fail", message: "Phone in use" });
+      user.phone = phone;
+    }
+    if (name) user.name = name;
+    await user.save();
+    res.json({ status: "success", user: { _id: user._id, name: user.name, phone: user.phone, role: user.role } });
+  } catch (err) { res.status(500).json({ status: "fail", message: err.message }); }
+};
+
