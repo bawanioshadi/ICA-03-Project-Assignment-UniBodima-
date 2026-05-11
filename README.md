@@ -193,15 +193,14 @@ UniBodima provides a digital marketplace tailored to the local housing landscape
 
 ## 📸 Screenshots
 
-| Landing Page | Search & Filters | Property Details |
 | :---: | :---: | :---: |
-| ![Home](image.png) | ![Filters](image-1.png) | ![Details](image-2.png) |
+| ![Home]![alt text](image.png) | ![Filters](image-1.png) | ![Details](image-2.png) |
 
-| Owner Dashboard | My Properties | Requests Management |
+
 | :---: | :---: | :---: |
 | ![Owner](image-3.png) | ![Properties](image-4.png) | ![Requests](image-5.png) |
 
-| Mobile View | Mobile View | Mobile View |
+
 | :---: | :---: | :---: |
 | ![Profile](image-8.png) | ![Mobile](image-9.png) | ![Search](image-10.png) |
 
