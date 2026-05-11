@@ -199,7 +199,7 @@ UniBodima provides a digital marketplace tailored to the local housing landscape
 
 
 | :---: | :---: | :---: |
-| ![request] | ![alt text](image-4.png) | ![properties]![alt text](image-4.png) |
+| ![request] | ![alt text](<Screenshot 2026-05-11 213326.png>)| ![properties]![alt text](image-4.png) |
 
 
 | :---: | :---: | :---: |
