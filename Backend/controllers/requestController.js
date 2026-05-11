@@ -77,6 +77,9 @@ export const getStudentRequests = async (req, res) => {
 export const rejectRequest = async (req, res) => {
   try {
     const { rejectReason } = req.body;
+    if (!rejectReason) {
+      return res.status(400).json({ status: "fail", message: "Reject reason is required" });
+    }
 
     const request = await Request.findById(req.params.id);
 

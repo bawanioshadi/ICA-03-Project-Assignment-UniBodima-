@@ -140,6 +140,8 @@ function App() {
     password: '',
     role: 'student',
   })
+  const [showLoginPassword, setShowLoginPassword] = useState(false)
+  const [showSignupPassword, setShowSignupPassword] = useState(false)
   const [dashTab, setDashTab] = useState('home')
   const [browseSearch, setBrowseSearch] = useState('')
   const [studentDetailModal, setStudentDetailModal] = useState(false)
@@ -505,9 +507,8 @@ function App() {
 
     const result = await Swal.fire({
       title: 'Send visit request',
-      input: 'text',
-      inputLabel: 'Preferred visit time',
-      inputPlaceholder: 'Tomorrow 5 PM',
+
+  
       showCancelButton: true,
       confirmButtonText: 'Send request',
     })
@@ -533,20 +534,72 @@ function App() {
   const updateRequestStatus = async (requestId, status) => {
     try {
       if (status === 'accepted') {
-        await apiRequest(`/requests/accept/${requestId}`, {
-          method: 'PUT',
-          body: JSON.stringify({ visitDate: 'Tomorrow', visitTime: '5:00 PM' }),
+        const result = await Swal.fire({
+          title: 'Accept visit request',
+          html: `
+            <p class="text-start text-muted small mb-3">Choose when the student can visit.</p>
+            <label class="d-block text-start small fw-semibold mb-1">Visit date</label>
+            <input id="swal-visit-date" type="date" class="form-control mb-3" />
+            <label class="d-block text-start small fw-semibold mb-1">Visit time</label>
+            <input id="swal-visit-time" type="time" class="form-control" step="60" />
+          `,
+          focusConfirm: false,
+          showCancelButton: true,
+          confirmButtonText: 'Accept',
+          cancelButtonText: 'Cancel',
+          preConfirm: () => {
+            const visitDate = document.getElementById('swal-visit-date')?.value?.trim() || ''
+            const visitTime = document.getElementById('swal-visit-time')?.value?.trim() || ''
+            if (!visitDate || !visitTime) {
+              Swal.showValidationMessage('Please enter both date and time.')
+              return false
+            }
+            return { visitDate, visitTime }
+          },
         })
+        if (!result.isConfirmed || !result.value) return
+
+        const data = await apiRequest(`/requests/accept/${requestId}`, {
+          method: 'PUT',
+          body: JSON.stringify({
+            visitDate: result.value.visitDate,
+            visitTime: result.value.visitTime,
+          }),
+        })
+        setRequests((prev) =>
+          prev.map((request) =>
+            request._id === requestId ? { ...request, ...(data.request || {}), status: 'accepted' } : request,
+          ),
+        )
+        toast.success('Request accepted with your visit schedule.')
       } else {
-        await apiRequest(`/requests/reject/${requestId}`, {
-          method: 'PUT',
-          body: JSON.stringify({ rejectReason: 'Owner unavailable' }),
+        const result = await Swal.fire({
+          title: 'Reject request',
+          input: 'textarea',
+          inputLabel: 'Reason for rejection',
+          inputPlaceholder: 'Explain why you are rejecting this visit request…',
+          showCancelButton: true,
+          confirmButtonText: 'Reject',
+          confirmButtonColor: '#dc2626',
+          inputValidator: (value) => {
+            if (!value || !String(value).trim()) {
+              return 'Please enter a rejection reason.'
+            }
+          },
         })
+        if (!result.isConfirmed) return
+
+        const data = await apiRequest(`/requests/reject/${requestId}`, {
+          method: 'PUT',
+          body: JSON.stringify({ rejectReason: String(result.value).trim() }),
+        })
+        setRequests((prev) =>
+          prev.map((request) =>
+            request._id === requestId ? { ...request, ...(data.request || {}), status: 'rejected' } : request,
+          ),
+        )
+        toast.success('Request rejected.')
       }
-      setRequests((prev) =>
-        prev.map((request) => (request._id === requestId ? { ...request, status } : request)),
-      )
-      toast.success(`Request marked as ${status}.`)
     } catch (error) {
       toast.error(error.message || 'Could not update request.')
     }
@@ -920,7 +973,32 @@ function App() {
                     <div>
                       <Form.Label htmlFor="login-password" className="form-label-subtle">Password</Form.Label>
                       <InputGroup>
-                        <Form.Control id="login-password" type="password" placeholder="Enter your password" value={loginForm.password} onChange={(event) => setLoginForm((prev) => ({ ...prev, password: event.target.value }))} />
+                        <Form.Control
+                          id="login-password"
+                          type={showLoginPassword ? 'text' : 'password'}
+                          placeholder="Enter your password"
+                          value={loginForm.password}
+                          onChange={(event) => setLoginForm((prev) => ({ ...prev, password: event.target.value }))}
+                        />
+                        <Button
+                          variant="outline-secondary"
+                          onClick={() => setShowLoginPassword((prev) => !prev)}
+                          aria-label={showLoginPassword ? 'Hide password' : 'Show password'}
+                        >
+                          {showLoginPassword ? (
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <path d="M17.94 17.94A10.94 10.94 0 0112 20C5 20 1 12 1 12a21.77 21.77 0 015.06-6.94" />
+                              <path d="M9.9 4.24A10.93 10.93 0 0112 4c7 0 11 8 11 8a21.8 21.8 0 01-2.16 3.19" />
+                              <path d="M14.12 14.12a3 3 0 01-4.24-4.24" />
+                              <path d="M1 1l22 22" />
+                            </svg>
+                          ) : (
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                              <circle cx="12" cy="12" r="3" />
+                            </svg>
+                          )}
+                        </Button>
                       </InputGroup>
                     </div>
                     <Button onClick={submitLogin}>Login</Button>
@@ -957,7 +1035,34 @@ function App() {
                     </div>
                     <div>
                       <Form.Label htmlFor="signup-password" className="form-label-subtle">Password</Form.Label>
-                      <Form.Control id="signup-password" type="password" placeholder="At least 6 characters" value={signupForm.password} onChange={(event) => setSignupForm((prev) => ({ ...prev, password: event.target.value }))} />
+                      <InputGroup>
+                        <Form.Control
+                          id="signup-password"
+                          type={showSignupPassword ? 'text' : 'password'}
+                          placeholder="At least 6 characters"
+                          value={signupForm.password}
+                          onChange={(event) => setSignupForm((prev) => ({ ...prev, password: event.target.value }))}
+                        />
+                        <Button
+                          variant="outline-secondary"
+                          onClick={() => setShowSignupPassword((prev) => !prev)}
+                          aria-label={showSignupPassword ? 'Hide password' : 'Show password'}
+                        >
+                          {showSignupPassword ? (
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <path d="M17.94 17.94A10.94 10.94 0 0112 20C5 20 1 12 1 12a21.77 21.77 0 015.06-6.94" />
+                              <path d="M9.9 4.24A10.93 10.93 0 0112 4c7 0 11 8 11 8a21.8 21.8 0 01-2.16 3.19" />
+                              <path d="M14.12 14.12a3 3 0 01-4.24-4.24" />
+                              <path d="M1 1l22 22" />
+                            </svg>
+                          ) : (
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                              <circle cx="12" cy="12" r="3" />
+                            </svg>
+                          )}
+                        </Button>
+                      </InputGroup>
                     </div>
                     <Button onClick={submitSignup}>Create Account</Button>
                     <Button variant="link" onClick={() => setAuthView('login')}>Already registered? Login</Button>
@@ -968,18 +1073,12 @@ function App() {
           </Row>
         ) : null}
 
-        {currentUser && ((currentUser.role === 'student' && dashTab === 'properties') || (currentUser.role === 'owner' && dashTab === 'home')) ? (
+        {currentUser && currentUser.role === 'student' && dashTab === 'properties' ? (
           <>
             <div className="d-flex flex-wrap justify-content-between align-items-start gap-4 mb-4">
               <div>
-                <h1 className="ub-page-title mb-2">
-                  {currentUser.role === 'owner' ? 'All boardings' : 'All boardings'}
-                </h1>
-                <p className="text-secondary mb-0">
-                  {currentUser.role === 'owner'
-                    ? 'View all public boardings available on the platform'
-                    : 'Browse verified boarding near your campus'}
-                </p>
+                <h1 className="ub-page-title mb-2">All boardings</h1>
+                <p className="text-secondary mb-0">Browse verified boarding near your campus</p>
               </div>
               <div className="d-flex flex-wrap gap-2 flex-grow-1 ub-toolbar-search">
                 <Form.Control
@@ -1039,6 +1138,99 @@ function App() {
                   </Col>
                 ))
               )}
+            </Row>
+          </>
+        ) : null}
+
+        {currentUser && currentUser.role === 'owner' && dashTab === 'home' ? (
+          <>
+            <div className="mb-4">
+              <h1 className="ub-page-title mb-2">Owner home</h1>
+              <p className="text-secondary mb-0">Quick overview of your listings and requests</p>
+            </div>
+            <Row className="g-3 mb-4">
+              <Col md={4}>
+                <Card className="border-0 shadow-sm h-100">
+                  <Card.Body>
+                    <div className="text-muted small">My properties</div>
+                    <div className="fs-3 fw-bold">{ownerProperties.length}</div>
+                  </Card.Body>
+                </Card>
+              </Col>
+              <Col md={4}>
+                <Card className="border-0 shadow-sm h-100">
+                  <Card.Body>
+                    <div className="text-muted small">Pending requests</div>
+                    <div className="fs-3 fw-bold">{ownerRequests.filter((r) => r.status === 'pending').length}</div>
+                  </Card.Body>
+                </Card>
+              </Col>
+              <Col md={4}>
+                <Card className="border-0 shadow-sm h-100">
+                  <Card.Body>
+                    <div className="text-muted small">Accepted requests</div>
+                    <div className="fs-3 fw-bold">{ownerRequests.filter((r) => r.status === 'accepted').length}</div>
+                  </Card.Body>
+                </Card>
+              </Col>
+            </Row>
+            <Row className="g-3">
+              <Col lg={7}>
+                <Card className="border-0 shadow-sm h-100">
+                  <Card.Body>
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                      <h5 className="mb-0">Recent my properties</h5>
+                      <Button size="sm" className="ub-btn-orange" onClick={() => setDashTab('properties')}>
+                        Manage all
+                      </Button>
+                    </div>
+                    {ownerProperties.length === 0 ? (
+                      <p className="text-muted mb-0">No properties yet.</p>
+                    ) : (
+                      ownerProperties.slice(0, 3).map((property) => (
+                        <div key={property.id} className="d-flex align-items-center gap-3 py-2 border-bottom">
+                          <img
+                            src={property.images[0] || DEFAULT_LISTING_IMG}
+                            alt=""
+                            width={70}
+                            height={48}
+                            className="rounded"
+                            style={{ objectFit: 'cover' }}
+                          />
+                          <div className="flex-grow-1">
+                            <div className="fw-semibold">{property.title}</div>
+                            <div className="small text-muted">{property.city}</div>
+                          </div>
+                          <span className="fw-semibold text-primary">{formatLkr(property.price)}</span>
+                        </div>
+                      ))
+                    )}
+                  </Card.Body>
+                </Card>
+              </Col>
+              <Col lg={5}>
+                <Card className="border-0 shadow-sm h-100">
+                  <Card.Body>
+                    <h5 className="mb-3">Recent requests</h5>
+                    {ownerRequests.length === 0 ? (
+                      <p className="text-muted mb-0">No requests yet.</p>
+                    ) : (
+                      ownerRequests.slice(0, 4).map((request) => (
+                        <div key={request._id} className="py-2 border-bottom">
+                          <div className="fw-semibold">{request.studentName || 'Student'}</div>
+                          <div className="small text-muted">{request.boardingId?.title}</div>
+                          <Badge
+                            bg={request.status === 'accepted' ? 'success' : request.status === 'rejected' ? 'danger' : 'warning'}
+                            className="mt-1"
+                          >
+                            {request.status}
+                          </Badge>
+                        </div>
+                      ))
+                    )}
+                  </Card.Body>
+                </Card>
+              </Col>
             </Row>
           </>
         ) : null}
@@ -1270,6 +1462,32 @@ function App() {
                 <Badge bg="light" text="dark" className="ms-auto border">{selectedProperty.city}</Badge>
               </div>
               <p className="text-secondary">{selectedProperty.description}</p>
+              <Row className="g-2 mb-3">
+                <Col sm={6}>
+                  <Card className="border-0 bg-light p-2 h-100">
+                    <div className="small text-uppercase text-muted fw-semibold">Distance</div>
+                    <div className="fw-semibold">{selectedProperty.distanceFromUniversity || 'Not specified'}</div>
+                  </Card>
+                </Col>
+                <Col sm={3}>
+                  <Card className="border-0 bg-light p-2 h-100">
+                    <div className="small text-uppercase text-muted fw-semibold">Rooms</div>
+                    <div className="fw-semibold">{selectedProperty.roomCount ?? '—'}</div>
+                  </Card>
+                </Col>
+                <Col sm={3}>
+                  <Card className="border-0 bg-light p-2 h-100">
+                    <div className="small text-uppercase text-muted fw-semibold">Capacity</div>
+                    <div className="fw-semibold">{selectedProperty.studentsCapacity ?? '—'}</div>
+                  </Card>
+                </Col>
+              </Row>
+              {selectedProperty.specialNote ? (
+                <Card className="border-0 bg-light p-3 mb-3">
+                  <div className="small text-uppercase text-muted fw-semibold mb-1">Special note</div>
+                  <div>{selectedProperty.specialNote}</div>
+                </Card>
+              ) : null}
               <ListGroup horizontal className="feature-list mb-3 flex-wrap">
                 {selectedProperty.features.map((feature) => (
                   <ListGroup.Item key={feature} action active={feature === activeFeature} onClick={() => setActiveFeature(feature)}>
@@ -1355,18 +1573,7 @@ function App() {
               <Form.Label htmlFor="boarding-features" className="form-label-subtle">Special note / features</Form.Label>
               <Form.Control id="boarding-features" placeholder="Optional — comma separated (Wi‑Fi, meals, …)" value={propertyForm.features} onChange={(event) => setPropertyForm((prev) => ({ ...prev, features: event.target.value }))} />
             </div>
-            <div>
-              <Form.Label htmlFor="boarding-image-1" className="form-label-subtle">Main image URL</Form.Label>
-              <Form.Control id="boarding-image-1" placeholder="Optional — uses server default if empty" value={propertyForm.imageOne} onChange={(event) => setPropertyForm((prev) => ({ ...prev, imageOne: event.target.value }))} />
-            </div>
-            <div>
-              <Form.Label htmlFor="boarding-image-2" className="form-label-subtle">Additional image URL</Form.Label>
-              <Form.Control id="boarding-image-2" placeholder="Optional" value={propertyForm.imageTwo} onChange={(event) => setPropertyForm((prev) => ({ ...prev, imageTwo: event.target.value }))} />
-            </div>
-            <div>
-              <Form.Label htmlFor="boarding-image-3" className="form-label-subtle">Additional image URL</Form.Label>
-              <Form.Control id="boarding-image-3" placeholder="Optional" value={propertyForm.imageThree} onChange={(event) => setPropertyForm((prev) => ({ ...prev, imageThree: event.target.value }))} />
-            </div>
+           
           </Form>
         </Modal.Body>
         <Modal.Footer>
