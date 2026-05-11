@@ -1,17 +1,17 @@
-# UniBodima 🏠
+# UniBodima 
 ### The Premier Student Housing Platform for Vavuniya University
 
 UniBodima is a comprehensive real-estate platform designed specifically for students at the **University of Vavuniya, Sri Lanka**. It bridges the gap between property owners and students, making the process of finding and managing "Bodimas" (boarding houses) and annexes seamless, safe, and efficient.
 
 ---
 
-## 🛑 Problem Description
+##  Problem Description
 Finding suitable accommodation near the Vavuniya University campus is often a manual, time-consuming process for students. Key challenges include:
 - **Lack of Centralized Information**: Students often rely on physical notices or word-of-mouth.
 - **Verification Issues**: Difficulty in verifying the facilities and safety of a property before visiting.
 - **Communication Gaps**: No structured way for owners to manage student inquiries and visit requests.
 
-## ✅ Proposed Solution
+##  Proposed Solution
 UniBodima provides a digital marketplace tailored to the local housing landscape of Vavuniya. It offers:
 - **Centralized Listings**: A single hub for all available student housing near Pampaimadu and Kurumankadu.
 - **Property Details**: Extensive information including distance from university, capacity, and specific student categories (Girls only, Boys only, etc.).
@@ -19,7 +19,7 @@ UniBodima provides a digital marketplace tailored to the local housing landscape
 
 ---
 
-## ✨ Features
+##  Features
 - **Role-Based Authentication**: Distinct dashboards and capabilities for students and property owners.
 - **Property Management (Owners)**: Full CRUD operations for owners to list, edit, and delete their properties.
 - **Interest Requests**: Students can send "Visit Requests" to owners, who can then manage them through their dashboard.
@@ -29,7 +29,7 @@ UniBodima provides a digital marketplace tailored to the local housing landscape
 
 ---
 
-## 🛠 Technologies Used
+##  Technologies Used
 
 ### Frontend
 - **React.js + Vite**: Modern, fast development environment.
@@ -47,9 +47,9 @@ UniBodima provides a digital marketplace tailored to the local housing landscape
 
 ---
 
-## 🌐 API Endpoints (with Examples)
+##  API Endpoints (with Examples)
 
-### 🔑 Authentication
+###  Authentication
 
 #### 1. Register User
 `POST /api/auth/register`
@@ -91,7 +91,7 @@ UniBodima provides a digital marketplace tailored to the local housing landscape
 }
 ```
 
-### 🏠 Boarding Listings
+###  Boarding Listings
 
 #### 1. Get Public Boardings
 `GET /api/boardings/public`
@@ -126,7 +126,7 @@ UniBodima provides a digital marketplace tailored to the local housing landscape
 }
 ```
 
-### 📩 Request System
+###  Request System
 
 #### 1. Send Visit Request
 `POST /api/requests/create`
@@ -148,7 +148,7 @@ UniBodima provides a digital marketplace tailored to the local housing landscape
 
 ---
 
-## 🚀 Setup Instructions
+##  Setup Instructions
 
 1. **Clone the project**
    ```bash
@@ -174,7 +174,7 @@ UniBodima provides a digital marketplace tailored to the local housing landscape
 
 ---
 
-## 💻 How to Run the Project
+##  How to Run the Project
 
 1. **Start the Backend Server**
    ```bash
@@ -192,7 +192,7 @@ UniBodima provides a digital marketplace tailored to the local housing landscape
 
 ---
 
-## 📸 Screenshots
+##  Screenshots
 
 | Landing Page | Search & Filters | Property Details |
 | :---: | :---: | :---: |
