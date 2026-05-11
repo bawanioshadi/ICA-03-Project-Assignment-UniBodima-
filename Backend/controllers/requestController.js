@@ -38,6 +38,9 @@ export const getOwnerRequests = async (req, res) => {
 export const acceptRequest = async (req, res) => {
   try {
     const { visitDate, visitTime } = req.body;
+    if (!visitDate || !visitTime) {
+      return res.status(400).json({ status: "fail", message: "All fields are required" });
+    }
 
     const request = await Request.findById(req.params.id);
 
