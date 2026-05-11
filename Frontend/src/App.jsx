@@ -140,7 +140,7 @@ function App() {
     password: '',
     role: 'student',
   })
-  const [dashTab, setDashTab] = useState('browse')
+  const [dashTab, setDashTab] = useState('home')
   const [browseSearch, setBrowseSearch] = useState('')
   const [studentDetailModal, setStudentDetailModal] = useState(false)
   const [landingMaxDistanceKm, setLandingMaxDistanceKm] = useState(10)
@@ -302,7 +302,7 @@ function App() {
     setCurrentUser(null)
     setAuthToken('')
     setOwnerBoardingsList([])
-    setDashTab('browse')
+    setDashTab('home')
     setStudentDetailModal(false)
     localStorage.removeItem('authToken')
     localStorage.removeItem(STORAGE_USER_KEY)
@@ -591,9 +591,9 @@ function App() {
     return list
   }, [properties, landingMaxPrice, landingMaxDistanceKm, landingLocationQuery, landingChips])
 
-  const landingSix = useMemo(() => {
+  const landingThree = useMemo(() => {
     const picked = landingFeatured.length > 0 ? landingFeatured : properties
-    return picked.slice(0, 6)
+    return picked.slice(0, 3)
   }, [landingFeatured, properties])
 
   const toggleLandingChip = useCallback((id) => {
@@ -652,8 +652,8 @@ function App() {
                   <>
                     <button
                       type="button"
-                      className={`ub-nav-pill ${dashTab === 'browse' ? 'active' : ''}`}
-                      onClick={() => setDashTab('browse')}
+                      className={`ub-nav-pill ${dashTab === 'home' ? 'active' : ''}`}
+                      onClick={() => setDashTab('home')}
                     >
                       Home
                     </button>
@@ -666,8 +666,8 @@ function App() {
                     </button>
                     <button
                       type="button"
-                      className={`ub-nav-pill ${dashTab === 'browse' ? 'active' : ''}`}
-                      onClick={() => setDashTab('browse')}
+                      className={`ub-nav-pill ${dashTab === 'properties' ? 'active' : ''}`}
+                      onClick={() => setDashTab('properties')}
                     >
                       Properties
                     </button>
@@ -676,15 +676,15 @@ function App() {
                   <>
                     <button
                       type="button"
-                      className={`ub-nav-pill ${dashTab === 'browse' ? 'active' : ''}`}
-                      onClick={() => setDashTab('browse')}
+                      className={`ub-nav-pill ${dashTab === 'home' ? 'active' : ''}`}
+                      onClick={() => setDashTab('home')}
                     >
                       Home
                     </button>
                     <button
                       type="button"
-                      className={`ub-nav-pill ${dashTab === 'browse' ? 'active' : ''}`}
-                      onClick={() => setDashTab('browse')}
+                      className={`ub-nav-pill ${dashTab === 'properties' ? 'active' : ''}`}
+                      onClick={() => setDashTab('properties')}
                     >
                       Properties
                     </button>
@@ -753,7 +753,8 @@ function App() {
       )}
 
       <Container fluid={currentUser ? 'xxl' : false} className={`pb-5 ${currentUser ? 'ub-dashboard-wrap' : ''}`}>
-        {!currentUser && authView === 'landing' ? (
+        {((!currentUser && authView === 'landing') ||
+          (currentUser && currentUser.role === 'student' && dashTab === 'home')) ? (
           <>
             <section className="ub-landing-hero text-center text-white position-relative overflow-hidden rounded-3 mb-5">
               <div className="ub-landing-hero-bg" style={{ backgroundImage: `url(${LANDING_HERO_BG})` }} aria-hidden />
@@ -832,19 +833,27 @@ function App() {
               <div className="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
                 <div>
                   <h2 className="ub-section-title mb-1">Featured boardings</h2>
-                  <p className="text-secondary mb-0 small">Six public listings — sign in to request a visit or explore all after login.</p>
+                  <p className="text-secondary mb-0 small">Current public listings — sign in to request visits and view more.</p>
                 </div>
-                <Button variant="outline-dark" size="sm" className="rounded-pill" onClick={() => setAuthView('login')}>
-                  Sign in to see more
+                <Button
+                  variant="outline-dark"
+                  size="sm"
+                  className="rounded-pill"
+                  onClick={() => {
+                    if (currentUser) setDashTab('properties')
+                    else setAuthView('login')
+                  }}
+                >
+                  {currentUser ? 'View all' : 'More'}
                 </Button>
               </div>
               <Row className="g-4 row-cols-1 row-cols-md-2 row-cols-xl-3">
-                {landingSix.length === 0 ? (
+                {landingThree.length === 0 ? (
                   <Col xs={12}>
                     <Card className="border-0 shadow-sm py-5 text-center text-muted">No listings match your filters. Try widening distance or price.</Card>
                   </Col>
                 ) : (
-                  landingSix.map((property) => (
+                  landingThree.map((property) => (
                     <Col key={property.id}>
                       <Card className="ub-prop-card border-0 shadow-sm overflow-hidden h-100">
                         <div className="ub-prop-media">
@@ -959,12 +968,18 @@ function App() {
           </Row>
         ) : null}
 
-        {currentUser && currentUser.role === 'student' && dashTab === 'browse' ? (
+        {currentUser && ((currentUser.role === 'student' && dashTab === 'properties') || (currentUser.role === 'owner' && dashTab === 'home')) ? (
           <>
             <div className="d-flex flex-wrap justify-content-between align-items-start gap-4 mb-4">
               <div>
-                <h1 className="ub-page-title mb-2">Find accommodation</h1>
-                <p className="text-secondary mb-0">Browse verified boarding near your campus</p>
+                <h1 className="ub-page-title mb-2">
+                  {currentUser.role === 'owner' ? 'All boardings' : 'All boardings'}
+                </h1>
+                <p className="text-secondary mb-0">
+                  {currentUser.role === 'owner'
+                    ? 'View all public boardings available on the platform'
+                    : 'Browse verified boarding near your campus'}
+                </p>
               </div>
               <div className="d-flex flex-wrap gap-2 flex-grow-1 ub-toolbar-search">
                 <Form.Control
@@ -1062,7 +1077,7 @@ function App() {
           </>
         ) : null}
 
-        {currentUser && currentUser.role === 'owner' && dashTab === 'browse' ? (
+        {currentUser && currentUser.role === 'owner' && dashTab === 'properties' ? (
           <>
             <div className="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
               <div>
