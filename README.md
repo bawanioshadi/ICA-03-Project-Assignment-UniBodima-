@@ -165,11 +165,12 @@ UniBodima provides a digital marketplace tailored to the local housing landscape
      MONGO_URI=your_mongodb_connection_string
      JWT_SECRET=your_super_secret_key
      ```
+   - terminal type `npm start`
 
 3. **Frontend Configuration**
    - Navigate to the `Frontend` folder.
    - Install dependencies: `npm install`
-   - Ensure the API base URL in `src/api.ts` points to `http://localhost:5000/api`.
+   - terminal type `npm run dev`
 
 ---
 
